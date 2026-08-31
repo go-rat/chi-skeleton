@@ -127,7 +127,7 @@ Next steps:
      "%[1]s.Module" to ApplicationModule's Include call.
   2. run "make generate" to regenerate dependency injection and mocks.
   3. run "make gen-check"; mockery auto-discovers the new biz package and
-     writes its repo mock under mocks/%[1]s/biz (no .mockery.yaml edit needed).
+     writes its repo mock under internal/mocks/%[1]s/biz (no .mockery.yaml edit needed).
 `, m.Snake, m.Module)
 
 	return nil

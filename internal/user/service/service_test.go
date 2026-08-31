@@ -13,9 +13,9 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
+	mocksbiz "github.com/libtnb/chi-skeleton/internal/mocks/user/biz"
 	"github.com/libtnb/chi-skeleton/internal/user/biz"
 	"github.com/libtnb/chi-skeleton/internal/user/service"
-	mocksbiz "github.com/libtnb/chi-skeleton/mocks/user/biz"
 )
 
 // newTestRouter wires the service against a mocked repo and a real validator.
