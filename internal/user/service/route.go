@@ -3,7 +3,7 @@ package service
 import (
 	"net/http"
 
-	"github.com/libtnb/chi-skeleton/internal/pkg/transport"
+	"github.com/libtnb/chi-skeleton/internal/shared/transport"
 	"github.com/libtnb/chi-skeleton/internal/user/biz"
 )
 

@@ -1,5 +1,4 @@
-// Package service adapts HTTP and CLI to the usecase: bind, validate,
-// delegate, respond.
+// Package service adapts HTTP and CLI to the usecase.
 package service
 
 import (
@@ -7,7 +6,7 @@ import (
 
 	"github.com/libtnb/validator"
 
-	"github.com/libtnb/chi-skeleton/internal/pkg/transport"
+	"github.com/libtnb/chi-skeleton/internal/shared/transport"
 	"github.com/libtnb/chi-skeleton/internal/user/biz"
 )
 

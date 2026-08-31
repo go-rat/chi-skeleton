@@ -5,11 +5,11 @@ package app
 import (
 	"github.com/libtnb/wire"
 
-	"github.com/libtnb/chi-skeleton/internal/bootstrap"
-	"github.com/libtnb/chi-skeleton/internal/conf"
 	"github.com/libtnb/chi-skeleton/internal/order"
-	"github.com/libtnb/chi-skeleton/internal/pkg/registry"
-	"github.com/libtnb/chi-skeleton/internal/server"
+	"github.com/libtnb/chi-skeleton/internal/platform/bootstrap"
+	"github.com/libtnb/chi-skeleton/internal/platform/conf"
+	"github.com/libtnb/chi-skeleton/internal/platform/server"
+	"github.com/libtnb/chi-skeleton/internal/shared/registry"
 	"github.com/libtnb/chi-skeleton/internal/user"
 )
 

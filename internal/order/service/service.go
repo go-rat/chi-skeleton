@@ -1,5 +1,4 @@
-// Package service adapts HTTP to the usecase: bind, validate, delegate,
-// respond.
+// Package service adapts HTTP to the usecase.
 package service
 
 import (
@@ -8,10 +7,10 @@ import (
 	"github.com/libtnb/validator"
 
 	"github.com/libtnb/chi-skeleton/internal/order/biz"
-	"github.com/libtnb/chi-skeleton/internal/pkg/transport"
+	"github.com/libtnb/chi-skeleton/internal/shared/transport"
 )
 
-// OrderService adapts HTTP to the order usecase: bind, validate, delegate, respond.
+// OrderService handles the order HTTP endpoints.
 type OrderService struct {
 	order    *biz.OrderUsecase
 	validate *validator.Validator

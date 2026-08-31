@@ -12,8 +12,8 @@ import (
 	"github.com/libtnb/cron"
 	"github.com/libtnb/graceful"
 
-	"github.com/libtnb/chi-skeleton/internal/conf"
-	"github.com/libtnb/chi-skeleton/internal/pkg/registry"
+	"github.com/libtnb/chi-skeleton/internal/platform/conf"
+	"github.com/libtnb/chi-skeleton/internal/shared/registry"
 )
 
 type App struct {
@@ -38,8 +38,7 @@ func NewApp(
 	}
 }
 
-// Run migrates the database, then hands the lifecycle to graceful:
-// SIGINT/SIGTERM drains everything, SIGHUP hot-upgrades the binary.
+// Run migrates the database, then serves until SIGINT/SIGTERM; SIGHUP hot-upgrades.
 func (r *App) Run() error {
 	if err := r.migrator.Up(context.Background()); err != nil {
 		return err

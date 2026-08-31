@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/libtnb/chi-skeleton/internal/order/biz"
-	"github.com/libtnb/chi-skeleton/internal/pkg/transport"
+	"github.com/libtnb/chi-skeleton/internal/shared/transport"
 )
 
 func OrderRoutes(order *OrderService) transport.Endpoints {

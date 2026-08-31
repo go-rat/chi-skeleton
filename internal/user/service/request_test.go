@@ -7,12 +7,11 @@ import (
 	"github.com/libtnb/validator"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/libtnb/chi-skeleton/internal/pkg/transport"
+	"github.com/libtnb/chi-skeleton/internal/shared/transport"
 	"github.com/libtnb/chi-skeleton/internal/user/service"
 )
 
-// TestCheckRules catches invalid validate tags at test time; register custom
-// rules here if a request uses them.
+// TestCheckRules catches invalid validate tags at test time.
 func TestCheckRules(t *testing.T) {
 	v := validator.MustNew()
 

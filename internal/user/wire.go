@@ -6,7 +6,7 @@ package user
 import (
 	"github.com/libtnb/wire"
 
-	"github.com/libtnb/chi-skeleton/internal/pkg/registry"
+	"github.com/libtnb/chi-skeleton/internal/shared/registry"
 	"github.com/libtnb/chi-skeleton/internal/user/biz"
 	"github.com/libtnb/chi-skeleton/internal/user/data"
 	"github.com/libtnb/chi-skeleton/internal/user/service"

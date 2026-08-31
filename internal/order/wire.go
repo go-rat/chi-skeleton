@@ -9,7 +9,7 @@ import (
 	"github.com/libtnb/chi-skeleton/internal/order/biz"
 	"github.com/libtnb/chi-skeleton/internal/order/data"
 	"github.com/libtnb/chi-skeleton/internal/order/service"
-	"github.com/libtnb/chi-skeleton/internal/pkg/registry"
+	"github.com/libtnb/chi-skeleton/internal/shared/registry"
 )
 
 var Module = wire.New().

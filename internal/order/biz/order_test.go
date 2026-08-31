@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/libtnb/chi-skeleton/internal/order/biz"
-	"github.com/libtnb/chi-skeleton/internal/pkg/event"
+	"github.com/libtnb/chi-skeleton/internal/shared/event"
 	mocksbiz "github.com/libtnb/chi-skeleton/mocks/order/biz"
 )
 
