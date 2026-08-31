@@ -38,9 +38,9 @@ func NewApp(
 	}
 }
 
-// Run migrates the database, then serves until SIGINT/SIGTERM; SIGHUP hot-upgrades.
-func (r *App) Run() error {
-	if err := r.migrator.Up(context.Background()); err != nil {
+// Run migrates the database, then serves until ctx is cancelled; SIGHUP hot-upgrades.
+func (r *App) Run(ctx context.Context) error {
+	if err := r.migrator.Up(ctx); err != nil {
 		return err
 	}
 	fmt.Println("[DB] database migrated")
@@ -57,5 +57,5 @@ func (r *App) Run() error {
 	g.Listen("http", r.conf.HTTP.Address, r.server)
 
 	fmt.Println("[HTTP] listening and serving on", r.conf.HTTP.Address)
-	return g.Run()
+	return g.Run(ctx)
 }

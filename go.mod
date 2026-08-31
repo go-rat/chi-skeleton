@@ -18,7 +18,7 @@ require (
 	github.com/knadh/koanf/v2 v2.3.6
 	github.com/libtnb/chix/v2 v2.1.1
 	github.com/libtnb/cron v0.5.4
-	github.com/libtnb/graceful v0.1.0
+	github.com/libtnb/graceful v0.2.0
 	github.com/libtnb/logrotate v0.1.4
 	github.com/libtnb/sessions v1.5.0
 	github.com/libtnb/utils v1.2.2
