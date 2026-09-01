@@ -48,9 +48,9 @@ func TestSpecJSONUsesTypedSchemasAndNoBodyResponse(t *testing.T) {
 	must.Equal(t, version, "v1")
 	path := requireMap(t, requireMap(t, document, "paths"), "/things/{id}")
 	getResponse := requireMap(t, requireMap(t, requireMap(t, path, "get"), "responses"), "200")
-	must.MapContains(t, getResponse, "content")
+	must.MapContainsKey(t, getResponse, "content")
 	deleteResponse := requireMap(t, requireMap(t, requireMap(t, path, "delete"), "responses"), "204")
-	must.NotMapContains(t, deleteResponse, "content")
+	must.MapNotContainsKey(t, deleteResponse, "content")
 }
 
 func TestSpecJSONPropagatesGeneratorErrors(t *testing.T) {

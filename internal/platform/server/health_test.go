@@ -44,7 +44,7 @@ func TestRunHealthChecksReturnsNamedFailureAndCancelsSiblings(t *testing.T) {
 		default:
 			return false
 		}
-	}, time.Second, time.Millisecond)
+	}, must.Tick(time.Millisecond))
 }
 
 func TestRunHealthChecksHonorsTimeout(t *testing.T) {
