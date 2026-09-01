@@ -20,10 +20,10 @@ import (
 )
 
 // newTestRouter wires the service against a mocked repo and a real validator.
-func newTestRouter(t *testing.T) (*chi.Mux, *mocksbiz.UserRepoMock) {
+func newTestRouter(t *testing.T) (*chi.Mux, *mocksbiz.UserRepo) {
 	t.Helper()
 
-	repo := &mocksbiz.UserRepoMock{}
+	repo := &mocksbiz.UserRepo{}
 	user := service.NewUserService(biz.NewUserUsecase(repo), validator.MustNew())
 
 	router := chi.NewRouter()
