@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/stretchr/testify/require"
+	"github.com/libtnb/assert/must"
 )
 
 // TestGraph builds both generated graphs and exercises their managed cleanup.
@@ -18,23 +18,23 @@ func TestGraph(t *testing.T) {
 	t.Setenv("APP_LOG__PATH", filepath.Join(tmp, "test.log"))
 
 	application, cleanupApp, err := InitializeApp("test")
-	require.NoError(t, err)
-	require.NotNil(t, application)
-	require.NoError(t, application.migrator.Up(t.Context()))
+	must.NoError(t, err)
+	must.NotNil(t, application)
+	must.NoError(t, application.migrator.Up(t.Context()))
 
 	req := httptest.NewRequest(http.MethodGet, "/openapi.json", nil)
 	res := httptest.NewRecorder()
 	application.server.Handler.ServeHTTP(res, req)
-	require.Equal(t, http.StatusOK, res.Code)
-	require.Contains(t, res.Body.String(), `"version": "test"`)
-	require.Contains(t, res.Body.String(), `"/users/{id}"`)
+	must.Equal(t, res.Code, http.StatusOK)
+	must.Contains(t, res.Body.String(), `"version": "test"`)
+	must.Contains(t, res.Body.String(), `"/users/{id}"`)
 
-	require.NoError(t, cleanupApp())
-	require.NoError(t, cleanupApp())
+	must.NoError(t, cleanupApp())
+	must.NoError(t, cleanupApp())
 
 	management, cleanupCLI, err := InitializeCLI()
-	require.NoError(t, err)
-	require.NotNil(t, management)
-	require.NoError(t, cleanupCLI())
-	require.NoError(t, cleanupCLI())
+	must.NoError(t, err)
+	must.NotNil(t, management)
+	must.NoError(t, cleanupCLI())
+	must.NoError(t, cleanupCLI())
 }

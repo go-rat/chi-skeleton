@@ -8,8 +8,8 @@ import (
 	"testing"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/libtnb/assert/must"
 	"github.com/libtnb/validator"
-	"github.com/stretchr/testify/require"
 
 	"github.com/libtnb/chi-skeleton/internal/shared/transport"
 )
@@ -49,30 +49,30 @@ func bindOn[T any](t *testing.T, method, target, body string) (*T, int) {
 
 func TestBindBodyAndValidate(t *testing.T) {
 	got, status := bindOn[createReq](t, http.MethodPost, "/bind", `{"name":"alice"}`)
-	require.Equal(t, http.StatusOK, status)
-	require.Equal(t, "alice", got.Name)
+	must.Equal(t, status, http.StatusOK)
+	must.Equal(t, got.Name, "alice")
 }
 
 func TestBindRejectsInvalid(t *testing.T) {
 	_, status := bindOn[createReq](t, http.MethodPost, "/bind", `{"name":"ab"}`)
-	require.Equal(t, http.StatusUnprocessableEntity, status)
+	must.Equal(t, status, http.StatusUnprocessableEntity)
 }
 
 func TestBindRunsPrepareHook(t *testing.T) {
 	got, status := bindOn[transport.Paginate](t, http.MethodGet, "/bind", "")
-	require.Equal(t, http.StatusOK, status)
-	require.Equal(t, 1, got.Page)
-	require.Equal(t, 10, got.Limit)
+	must.Equal(t, status, http.StatusOK)
+	must.Equal(t, got.Page, 1)
+	must.Equal(t, got.Limit, 10)
 
 	got, status = bindOn[transport.Paginate](t, http.MethodGet, "/bind?page=3&limit=50", "")
-	require.Equal(t, http.StatusOK, status)
-	require.Equal(t, 3, got.Page)
-	require.Equal(t, 50, got.Limit)
+	must.Equal(t, status, http.StatusOK)
+	must.Equal(t, got.Page, 3)
+	must.Equal(t, got.Limit, 50)
 }
 
 func TestBindQueryOverLimitFailsValidation(t *testing.T) {
 	_, status := bindOn[transport.Paginate](t, http.MethodGet, "/bind?limit=5000", "")
-	require.Equal(t, http.StatusUnprocessableEntity, status)
+	must.Equal(t, status, http.StatusUnprocessableEntity)
 }
 
 type uriReq struct {
@@ -81,8 +81,8 @@ type uriReq struct {
 
 func TestBindURI(t *testing.T) {
 	got, status := bindOn[uriReq](t, http.MethodGet, "/bind/42", "")
-	require.Equal(t, http.StatusOK, status)
-	require.EqualValues(t, 42, got.ID)
+	must.Equal(t, status, http.StatusOK)
+	must.Equal(t, got.ID, 42)
 }
 
 func TestBindPropagatesCanceledContext(t *testing.T) {
@@ -97,5 +97,5 @@ func TestBindPropagatesCanceledContext(t *testing.T) {
 	req := httptest.NewRequest(http.MethodPost, "/bind", strings.NewReader(`{"name":"alice"}`)).WithContext(ctx)
 	req.Header.Set("Content-Type", "application/json")
 	router.ServeHTTP(httptest.NewRecorder(), req)
-	require.ErrorIs(t, bindErr, context.Canceled)
+	must.ErrorIs(t, bindErr, context.Canceled)
 }

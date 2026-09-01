@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/libtnb/assert/must"
 	"github.com/libtnb/validator"
-	"github.com/stretchr/testify/require"
 
 	"github.com/libtnb/chi-skeleton/internal/shared/registry"
 	"github.com/libtnb/chi-skeleton/internal/shared/transport"
@@ -24,9 +24,9 @@ type documentResponse struct {
 func requireMap(t *testing.T, parent map[string]any, key string) map[string]any {
 	t.Helper()
 	value, ok := parent[key]
-	require.True(t, ok, "missing key %q", key)
+	must.True(t, ok, must.Msgf("missing key %q", key))
 	result, ok := value.(map[string]any)
-	require.True(t, ok, "%q is %T, not an object", key, value)
+	must.True(t, ok, must.Msgf("%q is %T, not an object", key, value))
 	return result
 }
 
@@ -39,22 +39,23 @@ func TestSpecJSONUsesTypedSchemasAndNoBodyResponse(t *testing.T) {
 	}}
 
 	spec, err := SpecJSON("test", "v1", validator.MustNew(), routes)
-	require.NoError(t, err)
-	require.Contains(t, string(spec), `"format": "date-time"`)
+	must.NoError(t, err)
+	must.Contains(t, string(spec), `"format": "date-time"`)
 
 	var document map[string]any
-	require.NoError(t, json.Unmarshal(spec, &document))
-	require.Equal(t, "v1", requireMap(t, document, "info")["version"])
+	must.NoError(t, json.Unmarshal(spec, &document))
+	version, _ := requireMap(t, document, "info")["version"].(string)
+	must.Equal(t, version, "v1")
 	path := requireMap(t, requireMap(t, document, "paths"), "/things/{id}")
 	getResponse := requireMap(t, requireMap(t, requireMap(t, path, "get"), "responses"), "200")
-	require.Contains(t, getResponse, "content")
+	must.MapContains(t, getResponse, "content")
 	deleteResponse := requireMap(t, requireMap(t, requireMap(t, path, "delete"), "responses"), "204")
-	require.NotContains(t, deleteResponse, "content")
+	must.NotMapContains(t, deleteResponse, "content")
 }
 
 func TestSpecJSONPropagatesGeneratorErrors(t *testing.T) {
 	_, err := SpecJSON("", "v1", validator.MustNew(), nil)
-	require.Error(t, err)
+	must.Error(t, err)
 
 	routes := registry.Routes{{{
 		Method:   http.MethodGet,
@@ -62,5 +63,5 @@ func TestSpecJSONPropagatesGeneratorErrors(t *testing.T) {
 		Document: transport.Describe[documentRequest, documentResponse](0),
 	}}}
 	_, err = SpecJSON("test", "v1", validator.MustNew(), routes)
-	require.Error(t, err)
+	must.Error(t, err)
 }

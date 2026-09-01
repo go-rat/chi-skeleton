@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/libtnb/assert/check"
 	"github.com/libtnb/validator"
-	"github.com/stretchr/testify/assert"
 
 	"github.com/libtnb/chi-skeleton/internal/shared/transport"
 	"github.com/libtnb/chi-skeleton/internal/user/service"
@@ -21,6 +21,6 @@ func TestCheckRules(t *testing.T) {
 		service.UserAdd{},
 		service.UserUpdate{},
 	} {
-		assert.NoError(t, v.CheckType(reflect.TypeOf(req)), "%T has an invalid validate tag", req)
+		check.NoError(t, v.CheckType(reflect.TypeOf(req)), check.Msgf("%T has an invalid validate tag", req))
 	}
 }

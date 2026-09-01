@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/require"
+	"github.com/libtnb/assert/must"
 
 	"github.com/libtnb/chi-skeleton/internal/shared/registry"
 )
@@ -18,8 +18,8 @@ func TestRunHealthChecks(t *testing.T) {
 	}
 
 	name, err := runHealthChecks(t.Context(), checks)
-	require.NoError(t, err)
-	require.Empty(t, name)
+	must.NoError(t, err)
+	must.Empty(t, name)
 }
 
 func TestRunHealthChecksReturnsNamedFailureAndCancelsSiblings(t *testing.T) {
@@ -35,9 +35,9 @@ func TestRunHealthChecksReturnsNamedFailureAndCancelsSiblings(t *testing.T) {
 	}
 
 	name, err := runHealthChecks(t.Context(), checks)
-	require.ErrorIs(t, err, want)
-	require.Equal(t, "database", name)
-	require.Eventually(t, func() bool {
+	must.ErrorIs(t, err, want)
+	must.Equal(t, name, "database")
+	must.Eventually(t, func() bool {
 		select {
 		case <-finished:
 			return true
@@ -56,6 +56,6 @@ func TestRunHealthChecksHonorsTimeout(t *testing.T) {
 	}}}
 
 	name, err := runHealthChecks(ctx, checks)
-	require.ErrorIs(t, err, context.DeadlineExceeded)
-	require.Equal(t, "readiness", name)
+	must.ErrorIs(t, err, context.DeadlineExceeded)
+	must.Equal(t, name, "readiness")
 }

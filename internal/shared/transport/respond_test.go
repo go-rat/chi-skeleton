@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/go-rio/rio"
-	"github.com/stretchr/testify/require"
+	"github.com/libtnb/assert/must"
 
 	"github.com/libtnb/chi-skeleton/internal/shared/apperr"
 	"github.com/libtnb/chi-skeleton/internal/shared/transport"
@@ -23,8 +23,8 @@ func respond(t *testing.T, err error) (int, string) {
 
 func TestErrorFromNotFound(t *testing.T) {
 	status, body := respond(t, rio.ErrNotFound)
-	require.Equal(t, http.StatusNotFound, status)
-	require.Contains(t, body, "not found")
+	must.Equal(t, status, http.StatusNotFound)
+	must.Contains(t, body, "not found")
 }
 
 func TestErrorFromKinds(t *testing.T) {
@@ -38,15 +38,15 @@ func TestErrorFromKinds(t *testing.T) {
 	} {
 		err := apperr.New(kind, "mod.code", "public detail").Errorf("internal detail")
 		status, body := respond(t, err)
-		require.Equal(t, want, status, "kind %s", kind)
-		require.Contains(t, body, "mod.code")
-		require.Contains(t, body, "public detail")
-		require.NotContains(t, body, "internal detail")
+		must.Equal(t, status, want, must.Msgf("kind %s", kind))
+		must.Contains(t, body, "mod.code")
+		must.Contains(t, body, "public detail")
+		must.NotContains(t, body, "internal detail")
 	}
 }
 
 func TestErrorFromUnknownErrorHidesDetails(t *testing.T) {
 	status, body := respond(t, errors.New("password=hunter2 exploded"))
-	require.Equal(t, http.StatusInternalServerError, status)
-	require.NotContains(t, body, "hunter2")
+	must.Equal(t, status, http.StatusInternalServerError)
+	must.NotContains(t, body, "hunter2")
 }

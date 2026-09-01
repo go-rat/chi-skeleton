@@ -1,6 +1,7 @@
 package service_test
 
 import (
+	"context"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -9,9 +10,9 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-rio/rio"
+	"github.com/libtnb/assert/check"
+	"github.com/libtnb/assert/must"
 	"github.com/libtnb/validator"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 
 	mocksbiz "github.com/libtnb/chi-skeleton/internal/mocks/user/biz"
 	"github.com/libtnb/chi-skeleton/internal/user/biz"
@@ -19,10 +20,10 @@ import (
 )
 
 // newTestRouter wires the service against a mocked repo and a real validator.
-func newTestRouter(t *testing.T) (*chi.Mux, *mocksbiz.UserRepo) {
+func newTestRouter(t *testing.T) (*chi.Mux, *mocksbiz.UserRepoMock) {
 	t.Helper()
 
-	repo := mocksbiz.NewUserRepo(t)
+	repo := &mocksbiz.UserRepoMock{}
 	user := service.NewUserService(biz.NewUserUsecase(repo), validator.MustNew())
 
 	router := chi.NewRouter()
@@ -51,80 +52,99 @@ func do(router *chi.Mux, method, target, body string) *httptest.ResponseRecorder
 
 func TestUserList(t *testing.T) {
 	router, repo := newTestRouter(t)
-	repo.EXPECT().List(mock.Anything, 1, 10).
-		Return([]*biz.User{{ID: 1, Name: "alice"}}, int64(1), nil)
+	repo.ListFunc = func(context.Context, int, int) ([]*biz.User, int64, error) {
+		return []*biz.User{{ID: 1, Name: "alice"}}, 1, nil
+	}
 
 	w := do(router, http.MethodGet, "/users", "")
 
-	assert.Equal(t, http.StatusOK, w.Code)
-	assert.Contains(t, w.Body.String(), "alice")
+	check.Equal(t, w.Code, http.StatusOK)
+	check.Contains(t, w.Body.String(), "alice")
+	listed := repo.ListCalls()
+	must.Len(t, listed, 1)
+	// the paginate defaults reach the usecase
+	check.Equal(t, listed[0].Page, 1)
+	check.Equal(t, listed[0].Limit, 10)
 }
 
 func TestUserGet(t *testing.T) {
 	router, repo := newTestRouter(t)
-	repo.EXPECT().Get(mock.Anything, uint(1)).
-		Return(&biz.User{ID: 1, Name: "alice"}, nil)
+	repo.GetFunc = func(context.Context, uint) (*biz.User, error) {
+		return &biz.User{ID: 1, Name: "alice"}, nil
+	}
 
 	w := do(router, http.MethodGet, "/users/1", "")
 
-	assert.Equal(t, http.StatusOK, w.Code)
+	check.Equal(t, w.Code, http.StatusOK)
+	got := repo.GetCalls()
+	must.Len(t, got, 1)
+	check.Equal(t, got[0].ID, uint(1))
 }
 
 func TestUserGet_NotFoundMapsTo404(t *testing.T) {
 	router, repo := newTestRouter(t)
-	repo.EXPECT().Get(mock.Anything, uint(9)).
-		Return(nil, rio.ErrNotFound)
+	repo.GetFunc = func(context.Context, uint) (*biz.User, error) {
+		return nil, rio.ErrNotFound
+	}
 
 	w := do(router, http.MethodGet, "/users/9", "")
 
-	assert.Equal(t, http.StatusNotFound, w.Code)
+	check.Equal(t, w.Code, http.StatusNotFound)
 }
 
 func TestUserCreate(t *testing.T) {
 	router, repo := newTestRouter(t)
-	repo.EXPECT().ExistsName(mock.Anything, "alice").Return(false, nil)
-	repo.EXPECT().Create(mock.Anything, mock.MatchedBy(func(u *biz.User) bool {
-		return u.Name == "alice"
-	})).Return(nil)
+	repo.ExistsNameFunc = func(context.Context, string) (bool, error) { return false, nil }
+	repo.CreateFunc = func(context.Context, *biz.User) error { return nil }
 
 	w := do(router, http.MethodPost, "/users", `{"name":"alice"}`)
 
-	assert.Equal(t, http.StatusOK, w.Code)
+	check.Equal(t, w.Code, http.StatusOK)
+	created := repo.CreateCalls()
+	must.Len(t, created, 1)
+	check.Equal(t, created[0].User.Name, "alice")
 }
 
 func TestUserCreate_NameTakenMapsToConflict(t *testing.T) {
 	router, repo := newTestRouter(t)
-	repo.EXPECT().ExistsName(mock.Anything, "alice").Return(true, nil)
+	repo.ExistsNameFunc = func(context.Context, string) (bool, error) { return true, nil }
 
 	w := do(router, http.MethodPost, "/users", `{"name":"alice"}`)
 
-	assert.Equal(t, http.StatusConflict, w.Code)
+	check.Equal(t, w.Code, http.StatusConflict)
 }
 
 func TestUserCreate_RejectsShortName(t *testing.T) {
-	router, _ := newTestRouter(t) // no repo expectations: validation must fail first
+	router, _ := newTestRouter(t) // no repo funcs: validation must fail first
 
 	w := do(router, http.MethodPost, "/users", `{"name":"ab"}`)
 
-	assert.Equal(t, http.StatusUnprocessableEntity, w.Code)
+	check.Equal(t, w.Code, http.StatusUnprocessableEntity)
 }
 
 func TestUserUpdate_NotFoundMapsTo404(t *testing.T) {
 	router, repo := newTestRouter(t)
-	repo.EXPECT().Update(mock.Anything, mock.MatchedBy(func(u *biz.User) bool {
-		return u.ID == 9 && u.Name == "alice"
-	})).Return(nil, rio.ErrNotFound)
+	repo.UpdateFunc = func(context.Context, *biz.User) (*biz.User, error) {
+		return nil, rio.ErrNotFound
+	}
 
 	w := do(router, http.MethodPut, "/users/9", `{"name":"alice"}`)
 
-	assert.Equal(t, http.StatusNotFound, w.Code)
+	check.Equal(t, w.Code, http.StatusNotFound)
+	updated := repo.UpdateCalls()
+	must.Len(t, updated, 1)
+	check.Equal(t, updated[0].User.ID, uint(9))
+	check.Equal(t, updated[0].User.Name, "alice")
 }
 
 func TestUserDelete(t *testing.T) {
 	router, repo := newTestRouter(t)
-	repo.EXPECT().Delete(mock.Anything, uint(1)).Return(nil)
+	repo.DeleteFunc = func(context.Context, uint) error { return nil }
 
 	w := do(router, http.MethodDelete, "/users/1", "")
 
-	assert.Equal(t, http.StatusOK, w.Code)
+	check.Equal(t, w.Code, http.StatusOK)
+	deleted := repo.DeleteCalls()
+	must.Len(t, deleted, 1)
+	check.Equal(t, deleted[0].ID, uint(1))
 }
