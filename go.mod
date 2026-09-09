@@ -6,9 +6,9 @@ require (
 	github.com/coder/websocket v1.8.15
 	github.com/go-chi/chi/v5 v5.3.2
 	github.com/go-chi/cors v1.2.2
-	github.com/go-rio/migrate v0.12.0
-	github.com/go-rio/rio v0.15.0
-	github.com/go-rio/sqlite v0.4.1
+	github.com/go-rio/migrate v0.14.0
+	github.com/go-rio/rio v0.18.1
+	github.com/go-rio/sqlite v0.6.2
 	github.com/go-viper/mapstructure/v2 v2.5.0
 	github.com/golang-cz/httplog v0.0.2
 	github.com/knadh/koanf/parsers/yaml v1.1.1
@@ -17,14 +17,14 @@ require (
 	github.com/knadh/koanf/v2 v2.3.6
 	github.com/libtnb/assert v0.4.2
 	github.com/libtnb/chix/v2 v2.1.1
-	github.com/libtnb/cron v0.5.4
+	github.com/libtnb/cron v0.6.0
 	github.com/libtnb/graceful v0.2.1
-	github.com/libtnb/logrotate v0.1.4
+	github.com/libtnb/logrotate v0.1.5
 	github.com/libtnb/sessions v1.5.0
 	github.com/libtnb/utils v1.2.2
-	github.com/libtnb/validator v0.4.3
-	github.com/libtnb/validator/contrib/openapi v0.2.2
-	github.com/libtnb/wire v0.1.1
+	github.com/libtnb/validator v0.5.0
+	github.com/libtnb/validator/contrib/openapi v0.3.0
+	github.com/libtnb/wire v0.2.0
 	github.com/samber/oops v1.23.1
 	github.com/urfave/cli/v3 v3.11.0
 )
@@ -65,7 +65,7 @@ require (
 	github.com/spf13/cobra v1.10.2 // indirect
 	github.com/spf13/pflag v1.0.10 // indirect
 	github.com/stretchr/testify v1.12.1 // indirect
-	github.com/vektra/mockery/v3 v3.7.4 // indirect
+	github.com/vektra/mockery/v3 v3.8.0 // indirect
 	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect
 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
 	github.com/xeipuuv/gojsonschema v1.2.0 // indirect
